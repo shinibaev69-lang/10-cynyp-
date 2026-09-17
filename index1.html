@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10-сынып Информатика - ЖИ және Машиналық Оқыту Тесті</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            max-width: 850px;
+            width: 100%;
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        /* Нұсқа таңдау түймелері */
+        .variant-select {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .btn-var {
+            background-color: #4c51bf;
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            font-size: 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-var:hover {
+            background-color: #434190;
+            transform: translateY(-2px);
+        }
+
+        .btn-var.active {
+            background-color: #38a169;
+            box-shadow: 0 4px 12px rgba(56, 161, 105, 0.4);
+        }
+
+        .question-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #f7fafc;
+        }
+
+        /* Оқу мақсатының стилі */
+        .learning-objective {
+            font-size: 13px;
+            color: #2b6cb0;
+            background-color: #ebf8ff;
+            border-left: 4px solid #3182ce;
+            padding: 6px 12px;
+            border-radius: 0 6px 6px 0;
+            display: inline-block;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .question-text {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2d3748;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: #fff;
+            transition: all 0.2s ease;
+        }
+
+        .option-label:hover {
+            border-color: #4c51bf;
+            background-color: #f7fafc;
+        }
+
+        .option-label.disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .option-label input {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        /* АНИМАЦИЯЛАР */
+        @keyframes correctPulse {
+            0% { transform: scale(1); background-color: #c6f6d5; }
+            50% { transform: scale(1.02); background-color: #9ae6b4; }
+            100% { transform: scale(1); background-color: #c6f6d5; }
+        }
+
+        @keyframes shakeError {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .correct-anim {
+            animation: correctPulse 0.5s ease-in-out forwards;
+            border-color: #38a169 !important;
+            color: #22543d;
+            font-weight: bold;
+        }
+
+        .wrong-anim {
+            animation: shakeError 0.4s ease-in-out forwards;
+            border-color: #e53e3e !important;
+            background-color: #fed7d7 !important;
+            color: #742a2a;
+        }
+
+        .feedback-box {
+            margin-top: 12px;
+            font-weight: bold;
+            font-size: 15px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            animation: popIn 0.3s ease-out;
+        }
+
+        .btn-submit {
+            background-color: #38a169;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background-color: #2f855a;
+        }
+
+        /* Соңғы нәтиже блогы */
+        #result-box {
+            display: none;
+            text-align: center;
+            padding: 25px;
+            background-color: #f0fff4;
+            border: 2px solid #38a169;
+            border-radius: 12px;
+            margin-top: 25px;
+            animation: popIn 0.5s ease-out;
+        }
+
+        .score-emoji {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>10-сынып: ЖИ және Машиналық оқыту тесті</h1>
+    
+    <!-- Нұсқа таңдау -->
+    <div class="variant-select">
+        <button class="btn-var active" onclick="selectVariant(1)">1-нұсқа</button>
+        <button class="btn-var" onclick="selectVariant(2)">2-нұсқа</button>
+        <button class="btn-var" onclick="selectVariant(3)">3-нұсқа</button>
+    </div>
+
+    <!-- Сұрақтар контейнері -->
+    <div id="quiz-container"></div>
+
+    <button class="btn-submit" onclick="checkAnswers()">Тестті аяқтау және нәтижесін көру</button>
+
+    <!-- Соңғы нәтиже -->
+    <div id="result-box">
+        <div class="score-emoji" id="final-emoji">🎉</div>
+        <h2 style="color: #38a169;">Тест Аяқталды!</h2>
+        <p id="final-score" style="font-size: 20px; margin: 15px 0; color: #2d3748;"></p>
+        <button class="btn-var" onclick="resetQuiz()" style="background-color: #8e44ad;">Қайта бастау</button>
+    </div>
+</div>
+
+<script>
+    // Тест базасы (3 нұсқа, әр кайсысында 10 сұрақ + Оқу мақсаттары)
+    const quizData = {
+        1: [
+            {
+                objective: "10.1.2.1 жасанды интеллекттің даму кезеңдерін талдау және технологиялар мен деректер көлеміндегі өзгерістер оның дамуына қалай әсер еткенін талдау",
+                question: "1. ЖИ дамуындағы қаржыландыру тоқтап, қызығушылық бәсеңдеген кезеңдер қалай аталады?",
+                options: ["ЖИ Революциясы", "ЖИ Көктемі", "ЖИ Қысы (AI Winter)", "ЖИ Эволюциясы"],
+                correct: 2
+            },
+            {
+                objective: "10.1.2.1 жасанды интеллекттің даму кезеңдерін талдау және технологиялар мен деректер көлеміндегі өзгерістер оның дамуына қалай әсер еткенін талдау",
+                question: "2. Соңғы жылдары ЖИ-дің қарқынды дамуына негізгі себеп болған фактор қайсысы?",
+                options: ["Үлкен деректер (Big Data) мен қуатты процессорлар (GPU)", "Интернет жылдамдығының төмендеуі", "Қағаз кітаптардың көбеюі", "Компьютер бағасының қымбаттауы"],
+                correct: 0
+            },
+            {
+                objective: "10.1.2.2 машиналық оқытудың негізгі ұғымдарын (модель, оқыту, оқыту деректері, негізгі белгілері және болжау) түсіндіру",
+                question: "3. Машиналық оқытуда алгоритмге заңдылықтарды үйрету үшін берілетін бастапқы ақпарат жиынтығы не деп аталады?",
+                options: ["Тестілеу деректері", "Оқыту деректері (Training data)", "Шығыс сигналы", "Нәтиже"],
+                correct: 1
+            },
+            {
+                objective: "10.1.2.2 машиналық оқытудың негізгі ұғымдарын (модель, оқыту, оқыту деректері, негізгі белгілері және болжау) түсіндіру",
+                question: "4. Объектіні сипаттайтын жеке қасиеттер мен көрсеткіштер (мысалы: пәтердің ауданы, бөлме саны) не деп аталады?",
+                options: ["Модель", "Белгілер (Features)", "Салмақтар", "Активтендіру"],
+                correct: 1
+            },
+            {
+                objective: "10.1.2.3 перцептрон құрылымын (кірістер, салмақ, белсендіру функциясы, шығыс) сипаттау",
+                question: "5. Перцептронға кіретін ақпараттың маңыздылық дәрежесін білдіретін коэффициент:",
+                options: ["Салмақ (Weight)", "Шығыс (Output)", "Белсендіру", "Сұраныс"],
+                correct: 0
+            },
+            {
+                objective: "10.1.2.3 перцептрон құрылымын (кірістер, салмақ, белсендіру функциясы, шығыс) сипаттау",
+                question: "6. Перцептронда взвешенная сумманы (өлшенген қосындыны) соңғы шығыс сигналына айналдыратын блок:",
+                options: ["Кіріс нейроны", "Салмақ вектороы", "Белсендіру функциясы", "Оперативті жад"],
+                correct: 2
+            },
+            {
+                objective: "10.1.2.4 электронды кестелерде бірлік секіріс (Хевисайд) функциясын қолданып, перцептрон ж жұмысын модельдеу және салмақтың өзгеруі оқыту үдерісіне қалай әсер ететінін түсіндіру",
+                question: "7. Хевисайд (бірлік секіріс) функциясы x ≥ 0 болғанда қандай мән қайтарады?",
+                options: ["0", "1", "-1", "0.5"],
+                correct: 1
+            },
+            {
+                objective: "10.1.2.4 электронды кестелерде бірлік секіріс (Хевисайд) функциясын қолданып, перцептрон жұмысын модельдеу және салмақтың өзгеруі оқыту үдерісіне қалай әсер ететінін түсіндіру",
+                question: "8. Перцептрон оқыту барысында қате жіберсе, қай параметр түзетіледі?",
+                options: ["Кіріс мәндері", "Салмақтар (Weights)", "Монитор ажыратылымдығы", "Операциялық жүйе"],
+                correct: 1
+            },
+            {
+                objective: "10.1.2.5 машиналық оқыту түрлерін (мұғаліммен, мұғалімсіз, негіздеп) жіктеу",
+                question: "9. Деректерде белгіленген дайын жауаптары (labels) бар машиналық оқыту түрі:",
+                options: ["Мұғалімсіз оқыту", "Мұғаліммен оқыту (Supervised learning)", "Негіздеп оқыту", "Пассивті оқыту"],
+                correct: 1
+            },
+            {
+                objective: "10.1.2.6 электрондық кестелерде практикалық тапсырмалардың шешімін табу үшін k-means және сызықтық регрессия оқыту алгоритмдерін модельдеу",
+                question: "10. Деректерді ұқсастығына қарай кластерлерге біріктіретін алгоритм:",
+                options: ["Сызықтық регрессия", "K-means (K-орташалар)", "Перцептрон", "Сұрыптау"],
+                correct: 1
+            }
+        ],
+        2: [
+            {
+                objective: "10.1.2.1 жасанды интеллекттің даму кезеңдерін талдау және технологиялар мен деректер көлеміндегі өзгерістер оның дамуына қалай әсер еткенін талдау",
+                question: "1. 1950 жылы 'Машина ойлай ала ма?' деген сұрақ қойып, әйгілі тесті ұсынған ғалым:",
+                options: ["Алан Тьюринг", "Джон Маккарти", "Марвин Минский", "Илон Маск"],
+                correct: 0
+            },
+            {
+                objective: "10.1.2.1 жасанды интеллекттің даму кезеңдерін талдау және технологиялар мен деректер көлеміндегі өзгерістер оның дамуына қалай әсер еткенін талдау",
+                question: "2. 'Жасанды интеллект' термині алғаш рет ресми түрде қай жылы Дортмут конференциясында енгізілді?",
+                options: ["1945 ж.", "1956 ж.", "1980 ж.", "2000 ж."],
+                correct: 1
+            },
+            {
+                objective: "10.1.2.2 машиналық оқытудың негізгі ұғымдарын (модель, оқыту, оқыту деректері, негізгі белгілері және болжау) түсіндіру",
+                question: "3. Оқытылған модельдің жаңа деректер негізінде нәтиже шығару процесі қалай аталады?",
+                options: ["Оқыту (Training)", "Болжау (Prediction)", "Кластерлеу", "Форматтау"],
+                correct: 1
+            },
+            {
+                objective: "10.1.2.2 машиналық оқытудың негізгі ұғымдарын (модель, оқыту, оқыту деректері, негізгі белгілері және болжау) түсіндіру",
+                question: "4. Машиналық оқытудың басты мақсаты не?",
+                options: ["Деректердегі заңдылықты тауып, өздігінен шешім қабылдайтын модель құру", "Компьютердің тетіктерін жөндеу", "Браузерді жылдамдату", "Мәтінді көшіру"],
+                correct: 0
+            },
+            {
+                objective: "10.1.2.3 перцептрон құрылымын (кірістер, салмақ, белсендіру функциясы, шығыс) сипаттау",
+                question: "5. Алғашқы перцептрон моделін 1957 жылы кім ойлап тапты?",
+                options: ["Фрэнк Розенблатт", "Норберт Винер", "Алан Тьюринг", "Билл Гейтс"],
+                correct: 0
+            },
+            {
+                objective: "10.1.2.3 перцептрон құрылымын (кірістер, салмақ, белсендіру функциясы, шығыс) сипаттау",
+                question: "6. Перцептронда x1, x2 - кірістер, w1, w2 - салмақтар болса, взвешенная сумма (S) қалай есептеледі?",
+                options: ["S = x1 + x2", "S = (x1 * w1) + (x2 * w2)", "S = w1 * w2", "S = x1 * x2"],
+                correct: 1
+            },
+            {
+                objective: "10.1.2.4 электронды кестелерде бірлік секіріс (Хевисайд) функциясын қолданып, перцептрон жұмысын модельдеу және салмақтың өзгеруі оқыту үдерісіне қалай әсер ететінін түсіндіру",
+                question: "7. Хевисайд функциясы x < 0 болғанда қандай мән қайтарады?",
+                options: ["0", "1", "-1", "0.5"],
+                correct: 0
+            },
+            {
+                objective: "10.1.2.4 электронды кестелерде бірлік секіріс (Хевисайд) функциясын қолданып, перцептрон жұмысын модельдеу және салмақтың өзгеруі оқыту үдерісіне қалай әсер ететінін түсіндіру",
+                question: "8. Excel электрондық кестесінде Хевисайд функциясын жазу үшін қай формула қолданылады?",
+                options: ["=ЕСЛИ(S>=0; 1; 0)", "=СУММ(S)", "=СРЗНАЧ(S)", "=СЧЁТ(S)"],
+                correct: 0
+            },
+            {
+                objective: "10.1.2.5 машиналық оқыту түрлерін (мұғаліммен, мұғалімсіз, негіздеп) жіктеу",
+                question: "9. Агенттің ортамен әрекеттесуі, марапаттау (reward) мен жазалау арқылы оқыту түрі:",
+                options: ["Мұғаліммен оқыту", "Мұғалімсіз оқыту", "Негіздеп оқыту (Reinforcement learning)", "Статикалық оқыту"],
+                correct: 2
+            },
+            {
+                objective: "10.1.2.6 электрондық кестелерде практикалық тапсырмалардың шешімін табу үшін k-means және сызықтық регрессия оқыту алгоритмдерін модельдеу",
+                question: "10. Үздіксіз сандық мәнді (мысалы, үй бағасын) болжау үшін қандай алгоритм қолданылады?",
+                options: ["Сызықтық регрессия (Linear Regression)", "K-means", "Кластеризация", "Форматтау"],
+                correct: 0
+            }
+        ],
+        3: [
+            {
+                objective: "10.1.2.1 жасанды интеллекттің даму кезеңдерін талдау және технологиялар мен деректер көлеміндегі өзгерістер оның дамуына қалай әсер еткенін талдау",
+                question: "1. 1980-жылдардағы ЖИ дамуының өрлеуіне не себеп болды?",
+                options: ["Сараптамалық жүйелердің (Expert Systems) кеңінен таралуы", "Смартфондардың пайда болуы", "Суперкомпьютерлердің арзандауы", "Кванттық компьютерлер"],
+                correct: 0
+            },
+            {
+                objective: "10.1.2.1 жасанды интеллекттің даму кезеңдерін талдау және технологиялар мен деректер көлеміндегі өзгерістер оның дамуына қалай әсер еткенін талдау",
+                question: "2. Деректер көлемі өте аз болғанда, терең нейрондық желілерде қандай проблема туындайды?",
+                options: ["Желі жылдам жұмыс істейді", "Модельдің қайта оқытылып кетуі (Overfitting)", "Компьютер сөніп қалады", "Ешқандай әсері болмайды"],
+                correct: 1
+            },
+            {
+                objective: "10.1.2.2 машиналық оқытудың негізгі ұғымдарын (модель, оқыту, оқыту деректері, негізгі белгілері және болжау) түсіндіру",
+                question: "3. Оқытылған модельдің дәлдігін тексеру үшін қолданылатын деректер жиынтығы:",
+                options: ["Тестілеу деректері (Test data)", "Оқыту деректері", "Контекст", "Салмақтар"],
+                correct: 0
+            },
+            {
+                objective: "10.1.2.2 машиналық оқытудың негізгі ұғымдарын (модель, оқыту, оқыту деректері, негізгі белгілері және болжау) түсіндіру",
+                question: "4. Машиналық оқытудың дәстүрлі бағдарламалаудан айырмашылығы қандай?",
+                options: ["Ережелер қолдан жазылмайды, оны модель деректерден өзі үйренеді", "Код мүлдем жазылмайды", "Тек математикалық қосуды орындайды", "Интернетсіз жұмыс істемейді"],
+                correct: 0
+            },
+            {
+                objective: "10.1.2.3 перцептрон құрылымын (кірістер, салмақ, белсендіру функциясы, шығыс) сипаттау",
+                question: "5. Перцептрондағы 'Bias' (ығысу/смещение) параметрі не үшін қажет?",
+                options: ["Белсендіру функциясының шегін (порог) жылжыту үшін", "Нәтижені жою үшін", "Кіріс мәнін өшіру үшін", "Жадты тазалау үшін"],
+                correct: 0
+            },
+            {
+                objective: "10.1.2.3 перцептрон құрылымын (кірістер, салмақ, белсендіру функциясы, шығыс) сипаттау",
+                question: "6. Қарапайым бір қабатты перцептрон қандай есептерді шеше АЛМАЙДЫ?",
+                options: ["Сызықтық бөлінетін есептерді", "Сызықтық бөлінбейтін (XOR) есептерді", "Салыстыру есептерін", "Қосу есептерін"],
+                correct: 1
+            },
+            {
+                objective: "10.1.2.4 электронды кестелерде бірлік секіріс (Хевисайд) функциясын қолданып, перцептрон жұмысын модельдеу және салмақтың өзгеруі оқыту үдерісіне қалай әсер ететінін түсіндіру",
+                question: "7. Перцептронның оқыту жылдамдығы (Learning rate) тым жоғары болса не болады?",
+                options: ["Салмақтар тым қатты өзгеріп, оптималды шешімді өткізіп алуы мүмкін", "Модель лезде мінсіз болады", "Нәтиже 0 болады", "Формула өшеді"],
+                correct: 0
+            },
+            {
+                objective: "10.1.2.4 электронды кестелерде бірлік секіріс (Хевисайд) функциясын қолданып, перцептрон жұмысын модельдеу және салмақтың өзгеруі оқыту үдерісіне қалай әсер ететінін түсіндіру",
+                question: "8. Перцептрон салмағын жаңартудағы Δw (салмақ өзгерісі) неге байланысты?",
+                options: ["Қателікке (Error = Күтілген мән - Алынған мән) және оқыту жылдамдығына", "Монитор диагоналына", "Файл атына", "Тінтуір түріне"],
+                correct: 0
+            },
+            {
+                objective: "10.1.2.5 машиналық оқыту түрлерін (мұғаліммен, мұғалімсіз, негіздеп) жіктеу",
+                question: "9. Клиенттерді мінез-құлқы бойынша алдын ала белгіленбеген топтарға бөлу қай оқыту түріне жатады?",
+                options: ["Мұғалімсіз оқыту (Unsupervised learning)", "Мұғаліммен оқыту", "Негіздеп оқыту", "Қолдан оқыту"],
+                correct: 0
+            },
+            {
+                objective: "10.1.2.6 электрондық кестелерде практикалық тапсырмалардың шешімін табу үшін k-means және сызықтық регрессия оқыту алгоритмдерін модельдеу",
+                question: "10. K-means алгоритміндегі 'K' әрпі нені білдіреді?",
+                options: ["Кластерлердің (топтардың) санын", "Коэффициентті", "Арақашықтықты", "Нүктелер санын"],
+                correct: 0
+            }
+        ]
+    };
+
+    let currentVariant = 1;
+    let userAnswers = {};
+
+    window.onload = function() {
+        renderQuiz();
+    };
+
+    // Нұсқа таңдау
+    function selectVariant(variant) {
+        currentVariant = variant;
+        const buttons = document.querySelectorAll('.btn-var');
+        buttons.forEach((btn, idx) => {
+            if (idx + 1 === variant) btn.classList.add('active');
+            else btn.classList.remove('active');
+        });
+        resetQuiz();
+    }
+
+    // Тестті экранға шығару
+    function renderQuiz() {
+        const container = document.getElementById('quiz-container');
+        container.innerHTML = '';
+        const questions = quizData[currentVariant];
+
+        questions.forEach((q, qIndex) => {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+
+            let optionsHTML = '';
+            q.options.forEach((opt, oIndex) => {
+                optionsHTML += `
+                    <label class="option-label" id="label-${qIndex}-${oIndex}">
+                        <input type="radio" name="question-${qIndex}" value="${oIndex}" onchange="registerAnswer(${qIndex}, ${oIndex})">
+                        ${opt}
+                    </label>
+                `;
+            });
+
+            card.innerHTML = `
+                <div class="learning-objective">Оқу мақсаты: ${q.objective}</div>
+                <div class="question-text">${q.question}</div>
+                <div class="options">${optionsHTML}</div>
+                <div class="feedback-box" id="feedback-${qIndex}"></div>
+            `;
+
+            container.appendChild(card);
+        });
+    }
+
+    // ТЕК БІР РЕТ ЖАУАП БЕРУ ЖӘНЕ АНИМАЦИЯ ШЫҒАРУ
+    function registerAnswer(qIndex, selectedOption) {
+        // Егер осы сұраққа бұрын жауап берілсе, тоқтату
+        if (userAnswers[qIndex] !== undefined) {
+            return;
+        }
+
+        userAnswers[qIndex] = selectedOption;
+        const correctOption = quizData[currentVariant][qIndex].correct;
+        const feedbackDiv = document.getElementById(`feedback-${qIndex}`);
+
+        // Барлық радио түймелерді бұғаттау (екінші рет таңдай алмайды)
+        const inputs = document.querySelectorAll(`input[name="question-${qIndex}"]`);
+        inputs.forEach(input => {
+            input.disabled = true;
+            input.parentElement.classList.add('disabled');
+        });
+
+        const selectedLabel = document.getElementById(`label-${qIndex}-${selectedOption}`);
+        feedbackDiv.style.display = 'flex';
+
+        if (selectedOption === correctOption) {
+            // Дұрыс жауап анимациясы
+            selectedLabel.classList.add('correct-anim');
+            feedbackDiv.innerHTML = `<span>😊 Өте жақсы! Жауабыңыз дұрыс!</span>`;
+            feedbackDiv.style.color = '#27ae60';
+            feedbackDiv.style.backgroundColor = '#e8f8f5';
+        } else {
+            // Қате жауап анимациясы (Shake)
+            selectedLabel.classList.add('wrong-anim');
+            
+            // Дұрыс жауапты да бірге көрсетіп қою
+            const correctLabel = document.getElementById(`label-${qIndex}-${correctOption}`);
+            correctLabel.style.borderColor = '#38a169';
+            correctLabel.style.backgroundColor = '#c6f6d5';
+
+            feedbackDiv.innerHTML = `<span>😔 Қате! Дұрыс жауап жасыл түспен белгіленді.</span>`;
+            feedbackDiv.style.color = '#c0392b';
+            feedbackDiv.style.backgroundColor = '#fadbd8';
+        }
+    }
+
+    // Соңғы нәтижені бағалау
+    function checkAnswers() {
+        const questions = quizData[currentVariant];
+        let score = 0;
+
+        questions.forEach((q, qIndex) => {
+            const selected = userAnswers[qIndex];
+            if (selected === q.correct) {
+                score++;
+            }
+        });
+
+        const resultBox = document.getElementById('result-box');
+        const scoreText = document.getElementById('final-score');
+        const emojiDiv = document.getElementById('final-emoji');
+
+        resultBox.style.display = 'block';
+        scoreText.innerText = `Сіз 10 сұрақтың ${score} сұрағына дұрыс жауап бердіңіз!`;
+
+        if (score >= 9) {
+            emojiDiv.innerText = "🏆 ✨ 🌟";
+            scoreText.innerHTML += "<br><strong>Үздік нәтиже! Тақырыпты өте жақсы меңгергенсіз!</strong>";
+        } else if (score >= 7) {
+            emojiDiv.innerText = "👍 😊 🎉";
+            scoreText.innerHTML += "<br><strong>Жақсы нәтиже! Біліміңді ары қарай шыңда!</strong>";
+        } else if (score >= 5) {
+            emojiDiv.innerText = "😐 📚";
+            scoreText.innerHTML += "<br><strong>Орташа нәтиже. Тақырыпты қайталап өту ұсынылады.</strong>";
+        } else {
+            emojiDiv.innerText = "😢 📖 💡";
+            scoreText.innerHTML += "<br><strong>Төмен нәтиже. Материалдарды қайта оқып шығыңыз!</strong>";
+        }
+
+        resultBox.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Тестті қайта жүктеу
+    function resetQuiz() {
+        userAnswers = {};
+        document.getElementById('result-box').style.display = 'none';
+        renderQuiz();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
